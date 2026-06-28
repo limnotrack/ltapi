@@ -1,0 +1,16 @@
+template:
+  bootstrap: 5
+  bootswatch: cosmo
+  bslib:
+    bg: "#FEF7EC"
+    fg: "#0065a9"
+    primary: "#0065a9"
+navbar:
+  inverse: true
+  structure:
+    left:  [intro, reference, articles, tutorials, news]
+    right: [search, github]
+home:
+  title: ltapi - A package for accessing the LimnoTrack API
+  sidebar:
+    structure: [links, license, community, citation, authors, dev, toc]

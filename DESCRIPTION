@@ -1,0 +1,22 @@
+Package: ltapi
+Title: Fetch data from LimnoTrack API and web services
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Tadhg", "Moore", , "tadhg@limnotrack.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-3834-8868")),
+    person("Chris", "McBride", , "chris@limnotrack.com", role = "aut")
+  )
+Description: What the package does (one paragraph).
+License: GPL (>= 3)
+URL: https://limnotrack.com/ltapi/, http://limnotrack.com/ltapi/
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    cli,
+    geojsonsf,
+    httr2,
+    sf
