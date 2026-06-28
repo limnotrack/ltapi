@@ -20,6 +20,9 @@
 #' @export
 #' @importFrom httr2 request req_url_path_append req_headers req_url_query
 #' @importFrom httr2 resp_body_json resp_body_string
+#' @importFrom geojsonsf geojson_sf
+#' @importFrom dplyr mutate across where
+#' @importFrom lubridate parse_date_time
 #'
 #'
 #' @examples
@@ -72,7 +75,13 @@ lt_fetch <- function(
     }
     sf_obj
   } else {
-    tibble::as_tibble(httr2::resp_body_json(resp, simplifyVector = TRUE))
+    df <- tibble::as_tibble(httr2::resp_body_json(resp, simplifyVector = TRUE))
+    df |>
+      dplyr::mutate(dplyr::across(
+        dplyr::where(\(x) is.character(x) &&
+                       any(grepl("^\\d{4}-\\d{2}-\\d{2}T", x, perl = TRUE))),
+        \(x) lubridate::parse_date_time(x, orders = "YmdHMSz", tz = "UTC")
+      ))
   }
 }
 
