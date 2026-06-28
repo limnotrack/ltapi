@@ -1,0 +1,154 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# ltapi <img src="man/figures/logo.png" align="right" height="139" alt="" />
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/limnotrack/ltapi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/limnotrack/ltapi/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/limnotrack/ltapi/graph/badge.svg)](https://app.codecov.io/gh/limnotrack/ltapi)
+<!-- badges: end -->
+
+The goal of ltapi is to provide a simple, consistent interface for querying and
+accessing lake and water quality data from the
+[LimnoTrack](https://limnotrack.com) database directly from R. It wraps the
+LimnoTrack PostgREST API, handling authentication, error handling, and response
+parsing so you can focus on your analysis.
+
+## Installation
+
+You can install the development version of ltapi from
+[GitHub](https://github.com/limnotrack/ltapi) with:
+
+``` r
+# install.packages("pak")
+pak::pak("limnotrack/ltapi")
+```
+
+## Example
+
+A typical workflow starts by exploring what tables are available, inspecting a
+table's schema, and then fetching data with optional filters.
+
+### Explore available tables
+
+``` {r}
+library(ltapi)
+
+# List all available tables in the LimnoTrack database
+lt_tables()
+```
+
+### Inspect a table schema
+
+Before fetching data it can be useful to check the available columns, their
+types, and descriptions:
+
+``` {r}
+lt_schema("lernzmp_lakes")
+```
+
+### Fetch data
+
+Use `lt_fetch()` with `lt_filter()` to query a specific lake:
+
+``` {r}
+wq <- lt_fetch(
+  table  = "water_profile",
+  filter = lt_filter(site_id == "Rotorua"),
+  order  = "datetime.asc",
+  limit = 1000
+)
+
+wq
+```
+
+### Fetch spatial data
+
+Tables with geometry columns are automatically returned as
+[`sf`](https://r-spatial.github.io/sf/) objects:
+
+``` {r}
+contours <- lt_fetch(
+  table  = "lake_contours",
+  filter = lt_filter(lernzmp_id == "LID40188")
+)
+
+class(contours)
+```
+
+### Plot
+
+``` {r}
+library(ggplot2)
+
+ggplot(wq, aes(x = datetime, y = value, colour = factor(qc_level))) +
+  geom_point() +
+  facet_wrap(~parameter) +
+  labs(
+    title = "Lake Rotorua Data",
+    x     = NULL,
+    y     = "Value",
+    colour = "QC Level"
+  ) +
+  scale_x_datetime(date_labels = "%Y-%m-%d") +
+  theme_bw()
+```
+
+## Filtering
+
+`lt_filter()` supports standard R comparison operators and translates them into
+PostgREST query expressions:
+
+``` {r}
+# Single condition
+lt_fetch("lernzmp_lakes", filter = lt_filter(z_max >= 5), limit = 5)
+
+# Multiple conditions
+lt_fetch("lernzmp_lakes", filter = lt_filter(
+  region == "Bay of Plenty",
+  z_max    >= 50
+))
+
+# Set membership
+lt_fetch("lake_metadata", filter = lt_filter(
+  id %in% c("LID40188", "LID40189")
+))
+
+# Null checks
+lt_fetch("water_profile", filter = lt_filter(
+  !is.na(value)
+))
+```
+
+| Operator | PostgREST equivalent |
+|---|---|
+| `==` | `eq` |
+| `!=` | `neq` |
+| `>` / `>=` | `gt` / `gte` |
+| `<` / `<=` | `lt` / `lte` |
+| `%in%` | `in` |
+| `is.na()` / `!is.na()` | `is.null` / `not.is.null` |
+
+## Caching
+
+The package caches the API schema in memory for the duration of your R session,
+so repeated calls to `lt_tables()`, `lt_schema()`, or `lt_fetch()` do not
+re-download the schema. To force a fresh fetch (e.g. after a database update):
+
+``` r
+lt_cache_reset()
+```
+
+
