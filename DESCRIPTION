@@ -6,7 +6,14 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-3834-8868")),
     person("Chris", "McBride", , "chris@limnotrack.com", role = "aut")
   )
-Description: What the package does (one paragraph).
+Description: Provides a tidy interface to the LimnoTrack PostgREST API
+    (<https://api.limnotrack.com/postgrest>), enabling R users to explore,
+    filter, and retrieve lake and water quality data directly into their R
+    session. Tables with geometry columns are automatically returned as 'sf'
+    objects. Includes helpers for constructing filter expressions using
+    familiar R syntax, in-session schema caching to minimise API calls, and
+    informative error messages for common failure modes such as unavailable
+    endpoints or missing tables.
 License: GPL (>= 3)
 URL: https://limnotrack.com/ltapi/, http://limnotrack.com/ltapi/
 Encoding: UTF-8
@@ -22,4 +29,9 @@ Imports:
     geojsonsf,
     httr2,
     lubridate,
-    sf
+    rlang,
+    sf,
+    tibble
+Depends:
+    R (>= 4.1.0)
+    
