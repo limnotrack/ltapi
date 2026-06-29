@@ -1,5 +1,7 @@
 #' Get (and cache) the OpenAPI spec
 #' @keywords internal
+#' @importFrom rlang caller_env
+#' @importFrom httr2 request req_headers resp_body_json
 get_spec <- function(base_url, call = rlang::caller_env()) {
   cache_key <- paste0(base_url, ":spec")
   if (!exists(cache_key, envir = .lt_schema_cache)) {

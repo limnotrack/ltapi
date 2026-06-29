@@ -1,6 +1,7 @@
 #' @keywords internal
 #' @importFrom httr2 req_perform req_error resp_status resp_is_error resp_status_desc
 #' @importFrom cli cli_abort
+#' @importFrom rlang caller_env
 perform_request <- function(req, call = rlang::caller_env()) {
   tryCatch(
     req |>
@@ -27,6 +28,7 @@ perform_request <- function(req, call = rlang::caller_env()) {
 #' @keywords internal
 #' @importFrom httr2 resp_status resp_is_error resp_status_desc
 #' @importFrom cli cli_abort
+#' @importFrom rlang caller_env
 check_response <- function(resp, call = rlang::caller_env()) {
   status <- httr2::resp_status(resp)
 

@@ -4,6 +4,8 @@
 #' @param base_url character; base URL of the PostgREST API. Defaults to
 #'   `"https://api.limnotrack.com/postgrest"`.
 #' @return A tibble with columns: `column`, `type`, `format`, and `description`.
+#' @importFrom tibble tibble
+#' @importFrom cli cli_abort
 #' @export
 #'
 #' @examples
@@ -22,11 +24,11 @@ lt_schema <- function(table, base_url = "https://api.limnotrack.com/postgrest") 
   props <- spec$definitions[[table]]$properties
 
   if (is.null(props)) {
-    stop(ltapi_not_found_error(
-      message = glue::glue(
-        "Table '{table}' not found. Use lt_tables() to see available tables."
-      )
-    ))
+    cli::cli_abort(
+      c("Table {.val {table}} not found.",
+        "i" = "Use {.run ltapi::lt_tables()} to see available tables."),
+      class = "ltapi_not_found"
+    )
   }
 
   tibble::tibble(
