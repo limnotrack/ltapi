@@ -28,8 +28,6 @@ Inspect the schema for a table in the LimnoTrack database
 }
 
 \examples{
-\dontrun{
-  lt_schema("my_table")
-}
+lt_schema("depth_contours")
 
 }

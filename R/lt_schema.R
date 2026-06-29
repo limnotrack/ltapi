@@ -9,9 +9,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'   lt_schema("my_table")
-#' }
+#' lt_schema("depth_contours")
 #'
 #' @section Errors:
 #' \describe{
